@@ -4,6 +4,7 @@ import { loadShadersCSM } from "gl-noise";
 import { initScene } from "./setup.js";
 import lights from "./lights.js";
 import Stats from "stats.js";
+import { MeshPhongMaterial } from "three";
 
 const v = {
   defines: "./static/shaders/particle_defines.glsl",
@@ -29,8 +30,13 @@ export async function main(canvas) {
   const loader = new THREE.TextureLoader();
   const disk = loader.load("./static/textures/circle-sprite.png");
 
-  const geometry = new THREE.IcosahedronGeometry(4, 32);
-  console.log(geometry.attributes.position.count);
+  const geometry = new THREE.PlaneGeometry(4, 4, 100, 100);
+
+  // const material = new THREE.CustomShaderMaterial({
+  //   color: 0xffffff.toExponential,
+  //   side: THREE.DoubleSide,
+  //   size: 0.03,
+  // });
   const material = new CustomShaderMaterial({
     baseMaterial: TYPES.POINTS,
     vShader: {
@@ -56,9 +62,6 @@ export async function main(canvas) {
       uTime: {
         value: 0,
       },
-      uTargetPos: {
-        value: new THREE.Vector3(0),
-      },
     },
     passthrough: {
       size: 0.1,
@@ -69,21 +72,6 @@ export async function main(canvas) {
 
   scene.add(points);
 
-  const targetPos = new THREE.Vector3();
-
-  renderer.domElement.addEventListener("pointermove", (event) => {
-    var vec = new THREE.Vector3(); // create once and reuse
-    var pos = new THREE.Vector3(); // create once and reuse
-    vec.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
-    vec.unproject(camera);
-    vec.sub(camera.position).normalize();
-    var distance = -camera.position.z / vec.z;
-    pos.copy(camera.position).add(vec.multiplyScalar(distance));
-    targetPos.x = pos.x;
-    targetPos.y = pos.y;
-    targetPos.z = pos.z;
-  });
-
   var stats = new Stats();
   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
   document.body.appendChild(stats.dom);
@@ -92,7 +80,6 @@ export async function main(canvas) {
     stats.begin();
     if (material && material.uniforms) {
       material.uniforms.uTime.value = time * 0.001;
-      material.uniforms.uTargetPos.value = targetPos;
     }
 
     controls.update();

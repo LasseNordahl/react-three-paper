@@ -9,7 +9,7 @@ function App() {
       <Paper
         script={main}
         style={{
-          background: "radial-gradient(circle, rgba(51,71,78,1) 0%, rgba(43,48,50,1) 51%)",
+          backgroundColor: "#2e2e2e",
         }}
         onEntry={() => console.log("Paper has entered the viewport!")}
         onExit={() => console.log("Paper has left the viewport!")}

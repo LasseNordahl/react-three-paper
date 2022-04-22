@@ -32,7 +32,7 @@ export default {
       verbose: true,
       contentBase: ["", "public"],
       host: "localhost",
-      port: 5000,
+      port: 3000,
     }),
     livereload({ watch: "dist" }),
   ],
